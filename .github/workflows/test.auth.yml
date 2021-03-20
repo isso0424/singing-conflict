@@ -1,13 +1,13 @@
-name: Build
+name: auth/Test
 
 on: push
 
-jobs: 
+jobs:
   build:
-    name: Build
+    name: auth/Test
     runs-on: ubuntu-latest
     steps:
-    
+
     - name: Set up Go 1.15
       uses: actions/setup-go@v2
       with:
@@ -17,5 +17,5 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
 
-    - name: Build
-      run: go build -v .
+    - name: Test
+      run: make auth/test

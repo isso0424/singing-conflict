@@ -1,10 +1,10 @@
-name: Test
+name: auth/Lint
 
 on: push
 
 jobs:
   build:
-    name: Test
+    name: auth/Lint
     runs-on: ubuntu-latest
     steps:
 
@@ -17,8 +17,5 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
 
-    - name: Get Dependencies
-      run: go mod download
-
-    - name: Test
-      run: go test -v ./...
+    - name: Lint
+      run: make auth/lint

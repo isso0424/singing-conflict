@@ -1,13 +1,13 @@
-name: Lint
+name: auth/Build
 
 on: push
 
-jobs: 
+jobs:
   build:
-    name: Lint
+    name: auth/Build
     runs-on: ubuntu-latest
     steps:
-    
+
     - name: Set up Go 1.15
       uses: actions/setup-go@v2
       with:
@@ -17,5 +17,5 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
 
-    - name: Lint
-      run: go vet ./...
+    - name: Build
+      run: make auth/build
