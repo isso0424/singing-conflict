@@ -43,6 +43,7 @@ func Generate() string {
 	type d struct {
 		Token string `json:"token"`
 	}
+	log.Println(string(data))
 	var result d
 	err = json.Unmarshal(data, &result)
 
