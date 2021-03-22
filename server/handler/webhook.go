@@ -77,7 +77,7 @@ func ParseHook(secret []byte, req *http.Request) (*HookContext, error) {
 }
 
 type response struct {
-	number int `json:"number"`
+	action string
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
