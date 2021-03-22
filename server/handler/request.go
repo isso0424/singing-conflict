@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -19,9 +20,7 @@ const (
 func Request(targetRepo string, owner string, number int) {
 	go func() {
 		for {
-			token := key.Generate()
-			log.Println(token)
-			d, err := fetchPull(targetRepo, owner, number, token)
+			d, err := fetchPull(targetRepo, owner, number)
 			if err != nil {
 				log.Println(err)
 				return
@@ -35,6 +34,11 @@ func Request(targetRepo string, owner string, number int) {
 				fmt.Println("dirty")
 				break
 			}
+			token := key.Generate()
+			err = commentPull(targetRepo, owner, number, token)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}()
 }
@@ -43,7 +47,7 @@ type repoData struct {
 	MergeableState string `json:"mergeable_state"`
 }
 
-func fetchPull(targetRepo string, owner string, number int, token string) (d repoData, err error) {
+func fetchPull(targetRepo string, owner string, number int) (d repoData, err error) {
 	req, err := http.NewRequest("GET", url + fmt.Sprintf(fetchEndpoint, owner, targetRepo, number), nil)
 	if err != nil {
 		return
@@ -73,5 +77,29 @@ func fetchPull(targetRepo string, owner string, number int, token string) (d rep
 	return
 }
 
-func commentPull(targetRepo, owner string, number int, token string) {
+func commentPull(targetRepo, owner string, number int, token string) (err error) {
+	body, err := json.Marshal(map[string]string{
+		"body": "conflict歌います。ズォールヒ～～↑ｗｗｗｗヴィヤーンタースｗｗｗｗｗワース フェスツｗｗｗｗｗｗｗルオルｗｗｗｗｗプローイユクｗｗｗｗｗｗｗダルフェ スォーイヴォーｗｗｗｗｗスウェンネｗｗｗｗヤットゥ ヴ ヒェンヴガｒジョｊゴアｊガオガオッガｗｗｗじゃｇｊｊ",
+	})
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	req, err := http.NewRequest("POST", url + fmt.Sprintf(sendEndpoint, owner, targetRepo, number), bytes.NewBuffer(body))
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	req.Header.Set("Accept", "application/vnd.github.v3+json")
+	req.Header.Set("Authorization", "token " + token)
+
+	client := http.Client{}
+	_, err = client.Do(req)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	return
 }
