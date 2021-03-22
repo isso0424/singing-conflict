@@ -76,6 +76,20 @@ func ParseHook(secret []byte, req *http.Request) (*HookContext, error) {
 	return &hc, nil
 }
 
+type response struct {
+	number int
+	pullRequest struct {
+		head struct {
+			repo struct {
+				name string
+				owner struct {
+					login string
+				}
+			}
+		}
+	}
+}
+
 func Handler(w http.ResponseWriter, r *http.Request) {
 	if r.Header.Get("x-gitHub-event") != "pull_request" {
 		w.WriteHeader(http.StatusOK)
@@ -89,7 +103,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Failed processing hook! ('%s')", err)
 		io.WriteString(w, "{}")
 	}
-	var data map[string]interface{}
+	var data response
 	err = json.Unmarshal(hc.Payload, &data)
 	fmt.Printf("%v", data);
 
@@ -107,5 +121,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	io.WriteString(w, "{}")
+	Request(data.pullRequest.head.repo.name, data.pullRequest.head.repo.owner.login, data.number)
 	return
 }
