@@ -29,7 +29,6 @@ func verifySignature(secret []byte, signature string, body []byte) bool {
 	if len(signature) != signatureLength || !strings.HasPrefix(signature, signaturePrefix) {
 		return false
 	}
-
 	actual := make([]byte, 20)
 	hex.Decode(actual, []byte(signature[5:]))
 
