@@ -95,6 +95,9 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	}
 	var data response
 	err = json.Unmarshal(hc.Payload, &data)
+	if err != nil {
+		log.Println(err)
+	}
 	fmt.Printf("%v", data);
 	fmt.Println(string(hc.Payload))
 
