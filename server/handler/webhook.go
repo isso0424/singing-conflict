@@ -77,7 +77,17 @@ func ParseHook(secret []byte, req *http.Request) (*HookContext, error) {
 }
 
 type response struct {
-	action string
+	Number int `json:"number"`
+	PullRequest struct {
+		Head struct {
+			Repo struct {
+				Name string
+				Owner struct {
+					Login string `json:"login"`
+				} `json:"owner"`
+			} `json:"repo"`
+		} `json:"head"`
+	} `json:"pull_request"`
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
@@ -95,11 +105,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	}
 	var data response
 	err = json.Unmarshal(hc.Payload, &data)
-	if err != nil {
-		log.Println(err)
-	}
 	fmt.Printf("%v", data);
-	fmt.Println(string(hc.Payload))
 
 	w.Header().Set("Content-type", "application/json")
 	if err != nil {
@@ -115,6 +121,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	io.WriteString(w, "{}")
-	Request("isso0424", "singing-conflict", data.number)
+	Request(data.PullRequest.Head.Repo, data.PullRequest.Head.Repo.Owner.Login, data.Number)
 	return
 }
