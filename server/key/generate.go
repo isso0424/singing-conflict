@@ -12,14 +12,13 @@ import (
 )
 
 func Generate() string {
-	token := jwt.New(jwt.GetSigningMethod("RS256"))
+	token := jwt.New(jwt.SigningMethodRS256)
 
 	claims := token.Claims.(jwt.MapClaims)
 	claims["iss"] = "Iv1.f77d0d05fba5649c"
 	claims["iat"] = time.Now().Unix()
 	claims["exp"] = time.Now().Add(time.Minute * 10).Unix()
 
-	log.Println(os.Getenv("KEY"))
 	tokenString, err := token.SignedString(os.Getenv("KEY"))
 	if err != nil {
 		log.Println(err)
