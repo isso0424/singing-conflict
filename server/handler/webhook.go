@@ -5,6 +5,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha1"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -78,7 +79,14 @@ func ParseHook(secret []byte, req *http.Request) (*HookContext, error) {
 func Handler(w http.ResponseWriter, r *http.Request) {
 
 	hc, err := ParseHook([]byte(secret), r)
-	fmt.Printf("%v", *hc);
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Printf("Failed processing hook! ('%s')", err)
+		io.WriteString(w, "{}")
+	}
+	var data map[string]interface{}
+	err = json.Unmarshal(hc.Payload, &data)
+	fmt.Printf("%v", data);
 
 	w.Header().Set("Content-type", "application/json")
 
