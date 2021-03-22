@@ -21,7 +21,7 @@ func Generate() string {
 
 	tokenString, _ := token.SignedString([]byte(os.Getenv("KEY")))
 
-	request, err := http.NewRequest("POST", "https://api.github.com/app/installations/1/access_tokens", nil)
+	request, err := http.NewRequest("GET", "https://api.github.com/app", nil)
 	if err != nil {
 		log.Println(err)
 		return ""
