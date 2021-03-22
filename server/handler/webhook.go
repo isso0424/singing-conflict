@@ -22,7 +22,6 @@ func signBody(secret, body []byte) []byte {
 }
 
 func verifySignature(secret []byte, signature string, body []byte) bool {
-
 	const signaturePrefix = "sha1="
 	const signatureLength = 45 // len(SignaturePrefix) + len(hex(sha1))
 
