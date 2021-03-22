@@ -121,6 +121,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	io.WriteString(w, "{}")
-	Request(data.PullRequest.Head.Repo, data.PullRequest.Head.Repo.Owner.Login, data.Number)
+	Request(data.PullRequest.Head.Repo.Name, data.PullRequest.Head.Repo.Owner.Login, data.Number)
 	return
 }
