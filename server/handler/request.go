@@ -27,7 +27,7 @@ func Request(targetRepo string, owner string, number int) {
 	}()
 }
 
-func repoData struct {
+type repoData struct {
 	MergeableState string `json:"mergeable_state"`
 }
 
@@ -58,5 +58,5 @@ func fetchPull(targetRepo string, owner string, number int, token string) (d rep
 	return
 }
 
-func commentPull(targetRepo, owner string, number int, token) {
+func commentPull(targetRepo, owner string, number int, token string) {
 }
