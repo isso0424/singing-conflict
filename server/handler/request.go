@@ -14,7 +14,7 @@ import (
 const (
 	url = "https://api.github.com"
 	fetchEndpoint = "/repos/%s/%s/pulls/%d"
-	sendEndpoint = "/repos/%s/%s/pulls/%d/comments"
+	sendEndpoint = "/repos/%s/%s/issues/%d/comments"
 )
 
 func Request(targetRepo string, owner string, number int) {
