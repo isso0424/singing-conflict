@@ -100,7 +100,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("Received %s", hc.Event)
-
   // parse `hc.Payload` or do additional processing here
 
 	w.WriteHeader(http.StatusOK)
