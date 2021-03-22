@@ -2,9 +2,6 @@ package handler
 
 // https://developer.github.com/webhooks/
 import (
-	"crypto/hmac"
-	"crypto/sha1"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"io"
@@ -12,32 +9,9 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
 )
 
-func signBody(secret, body []byte) []byte {
-	computed := hmac.New(sha1.New, secret)
-	computed.Write(body)
-	return []byte(computed.Sum(nil))
-}
-
-func verifySignature(secret []byte, signature string, body []byte) bool {
-
-	const signaturePrefix = "sha1="
-	const signatureLength = 45 // len(SignaturePrefix) + len(hex(sha1))
-
-	if len(signature) != signatureLength || !strings.HasPrefix(signature, signaturePrefix) {
-		return false
-	}
-
-	actual := make([]byte, 20)
-	hex.Decode(actual, []byte(signature[5:]))
-
-	return hmac.Equal(signBody(secret, body), actual)
-}
-
 type HookContext struct {
-	Signature string
 	Event     string
 	Id        string
 	Payload   []byte
@@ -45,10 +19,6 @@ type HookContext struct {
 
 func ParseHook(secret []byte, req *http.Request) (*HookContext, error) {
 	hc := HookContext{}
-
-	if hc.Signature = req.Header.Get("x-hub-signature"); len(hc.Signature) == 0 {
-		return nil, errors.New("No signature!")
-	}
 
 	if hc.Event = req.Header.Get("x-github-event"); len(hc.Event) == 0 {
 		return nil, errors.New("No event!")
@@ -62,10 +32,6 @@ func ParseHook(secret []byte, req *http.Request) (*HookContext, error) {
 
 	if err != nil {
 		return nil, err
-	}
-
-	if !verifySignature(secret, hc.Signature, body) {
-		return nil, errors.New("Invalid signature")
 	}
 
 	hc.Payload = body
