@@ -7,16 +7,16 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 )
 
 // Replace with your hook's secret
-const secret = "password"
+var secret = os.Getenv("WEBHOOK_SECRET")
 
 func signBody(secret, body []byte) []byte {
 	computed := hmac.New(sha1.New, secret)
@@ -77,11 +77,11 @@ func ParseHook(secret []byte, req *http.Request) (*HookContext, error) {
 }
 
 type response struct {
-	Number int `json:"number"`
+	Number      int `json:"number"`
 	PullRequest struct {
 		Head struct {
 			Repo struct {
-				Name string
+				Name  string
 				Owner struct {
 					Login string `json:"login"`
 				} `json:"owner"`
@@ -97,15 +97,16 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
+
 	hc, err := ParseHook([]byte(secret), r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Printf("Failed processing hook! ('%s')", err)
 		io.WriteString(w, "{}")
 	}
+
 	var data response
 	err = json.Unmarshal(hc.Payload, &data)
-	fmt.Printf("%v", data);
 
 	w.Header().Set("Content-type", "application/json")
 	if err != nil {
@@ -116,8 +117,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("Received %s", hc.Event)
-
-  // parse `hc.Payload` or do additional processing here
 
 	w.WriteHeader(http.StatusOK)
 	io.WriteString(w, "{}")

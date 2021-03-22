@@ -6,16 +6,21 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
-func Generate() string {
-	token := jwt.New(jwt.SigningMethodRS256)
+func Generate() (webToken string, err error) {
+	id, err := strconv.Atoi(os.Getenv("APP_ID"))
+	if err != nil {
+		return
+	}
 
+	token := jwt.New(jwt.SigningMethodRS256)
 	claims := token.Claims.(jwt.MapClaims)
-	claims["iss"] = 106343
+	claims["iss"] = id
 	claims["iat"] = time.Now().Unix()
 	claims["exp"] = time.Now().Add(time.Minute * 10).Unix()
 
@@ -23,35 +28,32 @@ func Generate() string {
 
 	tokenString, err := token.SignedString(key)
 	if err != nil {
-		log.Println(err)
-		return ""
+		return
 	}
 
 	request, err := http.NewRequest("POST", "https://api.github.com/app/installations/15627679/access_tokens", nil)
 	if err != nil {
-		log.Println(err)
-		return ""
+		return
 	}
-	request.Header.Add("Authorization", "Bearer " + tokenString)
+	request.Header.Add("Authorization", "Bearer "+tokenString)
 	request.Header.Add("Accept", "application/vnd.github.v3+json")
 
 	client := http.Client{}
 	res, err := client.Do(request)
 	if err != nil {
-		log.Println(err)
-		return ""
+		return
 	}
 	data, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		log.Println(err)
-		return ""
+		return
 	}
 	type d struct {
 		Token string `json:"token"`
 	}
-	log.Println(string(data))
+
 	var result d
 	err = json.Unmarshal(data, &result)
+	webToken = result.Token
 
-	return result.Token
+	return
 }

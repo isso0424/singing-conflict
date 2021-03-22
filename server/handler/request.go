@@ -12,9 +12,9 @@ import (
 )
 
 const (
-	url = "https://api.github.com"
+	url           = "https://api.github.com"
 	fetchEndpoint = "/repos/%s/%s/pulls/%d"
-	sendEndpoint = "/repos/%s/%s/issues/%d/comments"
+	sendEndpoint  = "/repos/%s/%s/issues/%d/comments"
 )
 
 func Request(targetRepo string, owner string, number int) {
@@ -25,19 +25,24 @@ func Request(targetRepo string, owner string, number int) {
 				log.Println(err)
 				return
 			}
-			log.Println(d)
+
 			if d.MergeableState == "unknown" || d.MergeableState == "" {
 				time.Sleep(time.Second * 5)
-			} else if d.MergeableState == "clean" {
+				continue
+			}
+
+			if d.MergeableState == "clean" {
 				return
-			} else {
-				fmt.Println("dirty")
-				token := key.Generate()
-				err = commentPull(targetRepo, owner, number, token)
-				if err != nil {
-					log.Println(err)
-				}
-				break
+			}
+
+			token, err := key.Generate()
+			if err != nil {
+				log.Println(err)
+			}
+
+			err = commentPull(targetRepo, owner, number, token)
+			if err != nil {
+				log.Println(err)
 			}
 		}
 	}()
@@ -48,10 +53,11 @@ type repoData struct {
 }
 
 func fetchPull(targetRepo string, owner string, number int) (d repoData, err error) {
-	req, err := http.NewRequest("GET", url + fmt.Sprintf(fetchEndpoint, owner, targetRepo, number), nil)
+	req, err := http.NewRequest("GET", url+fmt.Sprintf(fetchEndpoint, owner, targetRepo, number), nil)
 	if err != nil {
 		return
 	}
+
 	req.Header.Set("Accept", "application/vnd.github.v3+json")
 	client := http.Client{}
 	r, err := client.Do(req)
@@ -71,8 +77,6 @@ func fetchPull(targetRepo string, owner string, number int) (d repoData, err err
 
 	var da map[string]interface{}
 	err = json.Unmarshal(data, &da)
-	fmt.Println(da["mergeable_state"])
-	fmt.Printf("%v\n", d)
 
 	return
 }
@@ -84,13 +88,14 @@ func commentPull(targetRepo, owner string, number int, token string) (err error)
 	if err != nil {
 		return
 	}
-	req, err := http.NewRequest("POST", url + fmt.Sprintf(sendEndpoint, owner, targetRepo, number), bytes.NewBuffer(body))
+
+	req, err := http.NewRequest("POST", url+fmt.Sprintf(sendEndpoint, owner, targetRepo, number), bytes.NewBuffer(body))
 	if err != nil {
 		return
 	}
 
 	req.Header.Set("Accept", "application/vnd.github.v3+json")
-	req.Header.Set("Authorization", "token " + token)
+	req.Header.Set("Authorization", "token "+token)
 
 	client := http.Client{}
 	res, err := client.Do(req)
