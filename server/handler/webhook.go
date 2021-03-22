@@ -84,6 +84,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Failed processing hook! ('%s')", err)
 		io.WriteString(w, "{}")
 	}
+
 	var data map[string]interface{}
 
 	err = json.Unmarshal(hc.Payload, &data)
