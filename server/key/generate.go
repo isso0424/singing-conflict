@@ -27,7 +27,7 @@ func Generate() string {
 		return ""
 	}
 
-	request, err := http.NewRequest("GET", "https://api.github.com/app/installations/15627679/access_tokens", nil)
+	request, err := http.NewRequest("POST", "https://api.github.com/app/installations/15627679/access_tokens", nil)
 	if err != nil {
 		log.Println(err)
 		return ""
