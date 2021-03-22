@@ -1,26 +1,16 @@
 package handler
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"isso0424/singing-conflict/server/key"
+	"isso0424/singing-conflict/server/requests"
 	"log"
-	"net/http"
 	"time"
-)
-
-const (
-	url           = "https://api.github.com"
-	fetchEndpoint = "/repos/%s/%s/pulls/%d"
-	sendEndpoint  = "/repos/%s/%s/issues/%d/comments"
 )
 
 func Request(targetRepo string, owner string, number int) {
 	go func() {
 		for {
-			d, err := fetchPull(targetRepo, owner, number)
+			d, err := requests.FetchPP(targetRepo, owner, number)
 			if err != nil {
 				log.Println(err)
 				return
@@ -40,75 +30,10 @@ func Request(targetRepo string, owner string, number int) {
 				log.Println(err)
 			}
 
-			err = commentPull(targetRepo, owner, number, token)
+			err = requests.CommentToPR(targetRepo, owner, number, token)
 			if err != nil {
 				log.Println(err)
 			}
 		}
 	}()
-}
-
-type repoData struct {
-	MergeableState string `json:"mergeable_state"`
-}
-
-func fetchPull(targetRepo string, owner string, number int) (d repoData, err error) {
-	req, err := http.NewRequest("GET", url+fmt.Sprintf(fetchEndpoint, owner, targetRepo, number), nil)
-	if err != nil {
-		return
-	}
-
-	req.Header.Set("Accept", "application/vnd.github.v3+json")
-	client := http.Client{}
-	r, err := client.Do(req)
-	if err != nil {
-		return
-	}
-
-	data, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		return
-	}
-
-	err = json.Unmarshal(data, &d)
-	if err != nil {
-		return
-	}
-
-	var da map[string]interface{}
-	err = json.Unmarshal(data, &da)
-
-	return
-}
-
-func commentPull(targetRepo, owner string, number int, token string) (err error) {
-	body, err := json.Marshal(map[string]string{
-		"body": "conflict歌います。ズォールヒ～～↑ｗｗｗｗヴィヤーンタースｗｗｗｗｗワース フェスツｗｗｗｗｗｗｗルオルｗｗｗｗｗプローイユクｗｗｗｗｗｗｗダルフェ スォーイヴォーｗｗｗｗｗスウェンネｗｗｗｗヤットゥ ヴ ヒェンヴガｒジョｊゴアｊガオガオッガｗｗｗじゃｇｊｊ",
-	})
-	if err != nil {
-		return
-	}
-
-	req, err := http.NewRequest("POST", url+fmt.Sprintf(sendEndpoint, owner, targetRepo, number), bytes.NewBuffer(body))
-	if err != nil {
-		return
-	}
-
-	req.Header.Set("Accept", "application/vnd.github.v3+json")
-	req.Header.Set("Authorization", "token "+token)
-
-	client := http.Client{}
-	res, err := client.Do(req)
-	if err != nil {
-		return
-	}
-
-	data, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return
-	}
-
-	log.Println(string(data))
-
-	return
 }
