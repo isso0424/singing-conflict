@@ -77,7 +77,6 @@ func ParseHook(secret []byte, req *http.Request) (*HookContext, error) {
 
 	return &hc, nil
 }
-
 func Handler(w http.ResponseWriter, r *http.Request) {
 	hc, err := ParseHook([]byte(secret), r)
 	if err != nil {
