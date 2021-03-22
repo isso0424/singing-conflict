@@ -19,7 +19,7 @@ func Generate() string {
 	claims["iat"] = time.Now().Unix()
 	claims["exp"] = time.Now().Add(time.Minute * 10).Unix()
 
-	tokenString, err := token.SignedString(os.Getenv("KEY"))
+	tokenString, err := token.SignedString([]byte(os.Getenv("KEY")))
 	if err != nil {
 		log.Println(err)
 		return ""
