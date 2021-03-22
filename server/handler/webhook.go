@@ -14,7 +14,6 @@ import (
 	"strings"
 )
 
-// Replace with your hook's secret
 const secret = "password"
 
 func signBody(secret, body []byte) []byte {
