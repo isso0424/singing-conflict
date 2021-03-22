@@ -21,7 +21,6 @@ func signBody(secret, body []byte) []byte {
 	computed.Write(body)
 	return []byte(computed.Sum(nil))
 }
-
 func verifySignature(secret []byte, signature string, body []byte) bool {
 	const signaturePrefix = "sha1="
 	const signatureLength = 45 // len(SignaturePrefix) + len(hex(sha1))
