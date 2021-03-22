@@ -106,6 +106,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	var data response
 	err = json.Unmarshal(hc.Payload, &data)
 	fmt.Printf("%v", data);
+	fmt.Println(string(hc.Payload))
 
 	w.Header().Set("Content-type", "application/json")
 	if err != nil {
