@@ -15,9 +15,6 @@ import (
 	"strings"
 )
 
-// Replace with your hook's secret
-var secret = os.Getenv("WEBHOOK_SECRET")
-
 func signBody(secret, body []byte) []byte {
 	computed := hmac.New(sha1.New, secret)
 	computed.Write(body)
@@ -98,7 +95,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hc, err := ParseHook([]byte(secret), r)
+	hc, err := ParseHook([]byte(os.Getenv("WEBHOOK_SECRET")), r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Printf("Failed processing hook! ('%s')", err)
