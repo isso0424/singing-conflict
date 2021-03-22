@@ -98,7 +98,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, "{}")
 		return
 	}
-
 	log.Printf("Received %s", hc.Event)
   // parse `hc.Payload` or do additional processing here
 
