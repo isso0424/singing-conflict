@@ -89,7 +89,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("%v", data);
 
 	w.Header().Set("Content-type", "application/json")
-
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Printf("Failed processing hook! ('%s')", err)
