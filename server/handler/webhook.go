@@ -77,7 +77,7 @@ func ParseHook(secret []byte, req *http.Request) (*HookContext, error) {
 }
 
 type response struct {
-	number int
+	number int `json:"number"`
 	pullRequest struct {
 		head struct {
 			repo struct {
@@ -87,7 +87,7 @@ type response struct {
 				}
 			}
 		}
-	}
+	} `json:"pull_request"`
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
