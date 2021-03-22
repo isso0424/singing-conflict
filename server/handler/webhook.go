@@ -78,16 +78,6 @@ func ParseHook(secret []byte, req *http.Request) (*HookContext, error) {
 
 type response struct {
 	number int `json:"number"`
-	pullRequest struct {
-		head struct {
-			repo struct {
-				name string
-				owner struct {
-					login string
-				}
-			}
-		}
-	} `json:"pull_request"`
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
@@ -122,6 +112,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	io.WriteString(w, "{}")
-	Request(data.pullRequest.head.repo.name, data.pullRequest.head.repo.owner.login, data.number)
+	Request("isso0424", "singing-conflict", data.number)
 	return
 }
