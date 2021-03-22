@@ -32,12 +32,12 @@ func Request(targetRepo string, owner string, number int) {
 				return
 			} else {
 				fmt.Println("dirty")
+				token := key.Generate()
+				err = commentPull(targetRepo, owner, number, token)
+				if err != nil {
+					log.Println(err)
+				}
 				break
-			}
-			token := key.Generate()
-			err = commentPull(targetRepo, owner, number, token)
-			if err != nil {
-				log.Println(err)
 			}
 		}
 	}()
@@ -82,12 +82,10 @@ func commentPull(targetRepo, owner string, number int, token string) (err error)
 		"body": "conflict歌います。ズォールヒ～～↑ｗｗｗｗヴィヤーンタースｗｗｗｗｗワース フェスツｗｗｗｗｗｗｗルオルｗｗｗｗｗプローイユクｗｗｗｗｗｗｗダルフェ スォーイヴォーｗｗｗｗｗスウェンネｗｗｗｗヤットゥ ヴ ヒェンヴガｒジョｊゴアｊガオガオッガｗｗｗじゃｇｊｊ",
 	})
 	if err != nil {
-		log.Println(err)
 		return
 	}
 	req, err := http.NewRequest("POST", url + fmt.Sprintf(sendEndpoint, owner, targetRepo, number), bytes.NewBuffer(body))
 	if err != nil {
-		log.Println(err)
 		return
 	}
 
@@ -95,11 +93,17 @@ func commentPull(targetRepo, owner string, number int, token string) (err error)
 	req.Header.Set("Authorization", "token " + token)
 
 	client := http.Client{}
-	_, err = client.Do(req)
+	res, err := client.Do(req)
 	if err != nil {
-		log.Println(err)
 		return
 	}
+
+	data, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return
+	}
+
+	log.Println(string(data))
 
 	return
 }
