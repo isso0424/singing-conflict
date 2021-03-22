@@ -74,6 +74,7 @@ func ParseHook(secret []byte, req *http.Request) (*HookContext, error) {
 	}
 
 	hc.Payload = body
+
 	return &hc, nil
 }
 
