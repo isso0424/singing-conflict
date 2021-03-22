@@ -34,6 +34,8 @@ func Request(targetRepo string, owner string, number int) {
 			if err != nil {
 				log.Println(err)
 			}
+
+			return
 		}
 	}()
 }
