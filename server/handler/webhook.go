@@ -1,5 +1,4 @@
 package handler
-
 // https://developer.github.com/webhooks/
 import (
 	"crypto/hmac"
