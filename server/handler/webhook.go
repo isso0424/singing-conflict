@@ -77,6 +77,12 @@ func ParseHook(secret []byte, req *http.Request) (*HookContext, error) {
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
+	if r.Header.Get("x-gitHub-event") != "pull_request" {
+		w.WriteHeader(http.StatusOK)
+		io.WriteString(w, "{}")
+
+		return
+	}
 	hc, err := ParseHook([]byte(secret), r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
