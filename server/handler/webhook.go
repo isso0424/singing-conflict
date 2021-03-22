@@ -13,7 +13,6 @@ import (
 	"net/http"
 	"strings"
 )
-
 const secret = "password"
 
 func signBody(secret, body []byte) []byte {
