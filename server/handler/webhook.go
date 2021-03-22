@@ -17,7 +17,6 @@ import (
 // Replace with your hook's secret
 const secret = "password"
 
-
 func signBody(secret, body []byte) []byte {
 	computed := hmac.New(sha1.New, secret)
 	computed.Write(body)
