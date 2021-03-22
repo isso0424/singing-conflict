@@ -14,5 +14,8 @@ func main() {
 		log.Fatal(err)
 	}
 	http.HandleFunc("/webhook", handler.Handler)
-	http.ListenAndServe(":80", nil)
+	err = http.ListenAndServe(":4000", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
