@@ -7,6 +7,7 @@ import (
 	"isso0424/singing-conflict/server/key"
 	"log"
 	"net/http"
+	"time"
 )
 
 const (
@@ -17,13 +18,24 @@ const (
 
 func Request(targetRepo string, owner string, number int) {
 	go func() {
-		token := key.Generate()
-		d, err := fetchPull(targetRepo, owner, number, token)
-		if err != nil {
-			log.Println(err)
-			return
+		for {
+			token := key.Generate()
+			log.Println(token)
+			d, err := fetchPull(targetRepo, owner, number, token)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			log.Println(d)
+			if d.MergeableState == "unknown" || d.MergeableState == "" {
+				time.Sleep(time.Second * 5)
+			} else if d.MergeableState == "clean" {
+				return
+			} else {
+				fmt.Println("dirty")
+				break
+			}
 		}
-		log.Println(d)
 	}()
 }
 
