@@ -15,7 +15,7 @@ func Generate() string {
 	token := jwt.New(jwt.SigningMethodRS256)
 
 	claims := token.Claims.(jwt.MapClaims)
-	claims["iss"] = "Iv1.f77d0d05fba5649c"
+	claims["iss"] = 106343
 	claims["iat"] = time.Now().Unix()
 	claims["exp"] = time.Now().Add(time.Minute * 10).Unix()
 
