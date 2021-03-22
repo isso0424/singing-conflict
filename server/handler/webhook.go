@@ -84,6 +84,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, "{}")
 	}
 	var data map[string]interface{}
+
 	err = json.Unmarshal(hc.Payload, &data)
 	fmt.Printf("%v", data);
 
