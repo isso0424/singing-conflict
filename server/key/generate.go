@@ -2,6 +2,7 @@ package key
 
 import (
 	"encoding/json"
+	"encoding/pem"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -19,7 +20,9 @@ func Generate() string {
 	claims["iat"] = time.Now().Unix()
 	claims["exp"] = time.Now().Add(time.Minute * 10).Unix()
 
-	tokenString, err := token.SignedString([]byte(os.Getenv("KEY")))
+	block, _ := pem.Decode([]byte(os.Getenv("KEY")))
+
+	tokenString, err := token.SignedString(block.Bytes)
 	if err != nil {
 		log.Println(err)
 		return ""
