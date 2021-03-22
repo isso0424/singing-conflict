@@ -18,20 +18,24 @@ const (
 func Request(targetRepo string, owner string, number int) {
 	go func() {
 		token := key.Generate()
-		_, err := fetchPull(targetRepo, owner, number, token)
+		d, err := fetchPull(targetRepo, owner, number, token)
 		if err != nil {
 			log.Println(err)
 			return
 		}
+		log.Println(d)
 	}()
 }
 
-func fetchPull(targetRepo string, owner string, number int, token string) (d map[string]interface{}, err error) {
+func repoData struct {
+	MergeableState string `json:"mergeable_state"`
+}
+
+func fetchPull(targetRepo string, owner string, number int, token string) (d repoData, err error) {
 	req, err := http.NewRequest("GET", url + fmt.Sprintf(fetchEndpoint, owner, targetRepo, number), nil)
 	if err != nil {
 		return
 	}
-	req.Header.Set("Authorization", "token " + token)
 	req.Header.Set("Accept", "application/vnd.github.v3+json")
 	client := http.Client{}
 	r, err := client.Do(req)
@@ -52,4 +56,7 @@ func fetchPull(targetRepo string, owner string, number int, token string) (d map
 	fmt.Printf("%v\n", &d)
 
 	return
+}
+
+func commentPull(targetRepo, owner string, number int, token) {
 }
