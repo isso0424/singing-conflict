@@ -53,7 +53,10 @@ func fetchPull(targetRepo string, owner string, number int, token string) (d rep
 		return
 	}
 
-	fmt.Printf("%v\n", &d)
+	var da map[string]interface{}
+	err = json.Unmarshal(data, &da)
+	fmt.Println(da["mergeable_state"])
+	fmt.Printf("%v\n", d)
 
 	return
 }
