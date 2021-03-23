@@ -4,5 +4,5 @@ build:
 test:
 	go test -v ./...
 
-server/lint:
+lint:
 	go vet -v ./...
